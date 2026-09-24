@@ -1,0 +1,75 @@
+.mission-map-wrap {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+.mission-map-toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface-raised);
+}
+
+.mission-mode-button {
+  border: 1px solid var(--border);
+  background: var(--bg-base);
+  color: var(--text-muted);
+}
+
+.mission-mode-button.active {
+  color: var(--text-primary);
+  border-color: var(--aurora-green);
+  background: var(--aurora-green-dim);
+}
+
+.mission-map {
+  position: relative;
+  z-index: 0;
+  height: 300px;
+  width: 100%;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+
+.mission-map-note {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+/* Marker dot: dirender lewat L.divIcon (DOM Leaflet biasa, bukan React) */
+.mission-marker-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #06110d;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  border: 2px solid var(--bg-base);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.mission-marker-home {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--text-primary);
+  color: var(--bg-base);
+  font-size: 15px;
+  border: 2px solid var(--bg-base);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}

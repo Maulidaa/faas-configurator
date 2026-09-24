@@ -1,0 +1,1 @@
+export const DEFAULT_COMMAND_TIMEOUT_MS = 1000;

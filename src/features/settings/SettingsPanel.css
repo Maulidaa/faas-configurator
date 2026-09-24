@@ -1,0 +1,77 @@
+.settings-panel-message {
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.settings-panel-message-detail {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--armed-red);
+}
+
+.settings-retry-button {
+  margin-top: 14px;
+}
+
+.settings-armed-banner {
+  border: 1px solid var(--armed-red-dim);
+  background: var(--armed-red-dim);
+  color: var(--armed-red);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/*
+ * Grid 2 kolom untuk grup setting top-level — meniru dfu-workflow di
+ * DfuPanel.css, supaya beberapa grup kecil (Output Mapping Pin 0-1, Pin 2-3,
+ * Pin 4, dst.) duduk berdampingan alih-alih menumpuk vertikal satu per satu.
+ */
+.settings-tree {
+  columns: 2;
+  column-gap: 16px;
+}
+
+.settings-tree > .schema-group {
+  break-inside: avoid;
+  margin-bottom: 14px;
+}
+
+.settings-commit-bar {
+  position: sticky;
+  bottom: 0;
+  margin: 16px 0 0;
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.settings-commit-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex: 1 1 280px;
+}
+
+.settings-commit-button {
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .settings-tree {
+    columns: 1;
+  }
+
+  .settings-commit-bar {
+    align-items: flex-start;
+  }
+}

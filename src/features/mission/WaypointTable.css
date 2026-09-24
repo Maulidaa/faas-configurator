@@ -1,0 +1,102 @@
+.waypoint-table-empty {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.waypoint-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.waypoint-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.waypoint-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.waypoint-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.waypoint-table tr:last-child td {
+  border-bottom: none;
+}
+
+.waypoint-coord-input {
+  width: 130px;
+}
+
+.waypoint-alt-input {
+  width: 76px;
+}
+
+.waypoint-radius-input {
+  width: 68px;
+}
+
+.waypoint-coord-input,
+.waypoint-alt-input,
+.waypoint-radius-input,
+.waypoint-action-cell select {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 7px 8px;
+  font-size: 13px;
+}
+
+.waypoint-action-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.waypoint-row-controls {
+  display: flex;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.waypoint-icon-button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--bg-surface-raised);
+  color: var(--text-muted);
+  border-radius: 5px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.waypoint-icon-button:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.waypoint-icon-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.waypoint-icon-button-danger:hover:not(:disabled) {
+  color: var(--armed-red);
+  border-color: var(--armed-red-dim);
+}

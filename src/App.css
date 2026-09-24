@@ -1,0 +1,229 @@
+.app-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --- Header: wordmark + persistent connection/armed status --- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px clamp(16px, 3vw, 32px);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  flex-shrink: 0;
+  z-index: 2000;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.brand-mark {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: linear-gradient(120deg, var(--aurora-green), var(--aurora-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-full-name {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--aurora-violet);
+  border: 1px solid var(--aurora-violet);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.disconnect-button {
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface-raised);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.status-pill[data-state='connected'] .status-dot {
+  background: var(--aurora-green);
+  box-shadow: 0 0 8px 1px var(--aurora-green);
+}
+
+.status-pill[data-state='armed'] .status-dot {
+  background: var(--armed-red);
+  box-shadow: 0 0 8px 1px var(--armed-red);
+}
+
+.status-pill[data-state='armed'] {
+  color: var(--armed-red);
+  border-color: var(--armed-red-dim);
+}
+
+/* --- Tab strip (no router — Bagian 2, tab/state switch) --- */
+.tab-strip {
+  display: flex;
+  gap: 4px;
+  padding: 0 clamp(12px, 3vw, 32px);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  flex-shrink: 0;
+  z-index: 1999;
+}
+
+.tab-button {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  padding: 10px 13px;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab-button:hover {
+  color: var(--text-primary);
+  background: var(--aurora-green-dim);
+}
+
+.tab-button[aria-selected='true'] {
+  color: var(--text-primary);
+  border-bottom-color: var(--aurora-green);
+}
+
+/* --- Main content --- */
+.app-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(16px, 3vw, 28px) clamp(12px, 3vw, 32px);
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  scrollbar-width: thin;
+}
+
+.sflash-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 18px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-surface-raised);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 7px rgba(31, 79, 112, 0.08);
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.sflash-back-button:hover:not(:disabled) {
+  border-color: var(--aurora-violet);
+  background: #fff;
+  color: var(--aurora-violet);
+  box-shadow: 0 5px 14px rgba(31, 111, 174, 0.16);
+  transform: translateX(-2px);
+}
+
+.sflash-back-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 620px) {
+  .app-header {
+    align-items: flex-start;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand-full-name {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .status-pill {
+    padding: 5px 9px;
+    font-size: 12px;
+  }
+
+  .disconnect-button {
+    padding: 6px 9px;
+  }
+}
+
+.panel-placeholder {
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  color: var(--text-muted);
+}
+
+.panel-placeholder h2 {
+  margin: 0 0 6px;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.panel-placeholder p {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.panel-placeholder .panel-note {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}

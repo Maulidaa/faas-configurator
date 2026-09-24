@@ -1,0 +1,140 @@
+.log-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.log-intro {
+  padding: 0 2px;
+}
+
+.log-intro h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.log-intro p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.log-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.log-count {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.log-clear-button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--bg-surface-raised);
+  color: var(--text-muted);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.log-clear-button:hover:not(:disabled) {
+  color: var(--text-primary);
+  border-color: var(--armed-red-dim);
+}
+
+.log-clear-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.log-list {
+  flex: 1;
+  min-height: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  padding: 6px 0;
+  scrollbar-width: thin;
+}
+
+.log-empty {
+  padding: 24px 14px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.log-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(31, 111, 174, 0.08);
+}
+
+.log-row:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  flex: none;
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.log-level-badge {
+  flex: none;
+  width: 42px;
+  text-align: center;
+  border-radius: 4px;
+  padding: 1px 0;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  background: var(--bg-surface-raised);
+}
+
+.log-level-badge[data-level='success'] {
+  color: var(--aurora-green);
+  background: var(--aurora-green-dim);
+}
+
+.log-level-badge[data-level='error'] {
+  color: var(--armed-red);
+  background: var(--armed-red-dim);
+}
+
+.log-level-badge[data-level='warning'] {
+  color: #a8791f;
+  background: rgba(199, 152, 34, 0.16);
+}
+
+.log-message {
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.log-row[data-level='error'] .log-message {
+  color: var(--armed-red);
+}
+
+.log-detail {
+  color: var(--text-muted);
+}

@@ -1,0 +1,134 @@
+.mission-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .mission-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
+  }
+
+  .mission-armed-banner {
+    grid-column: 1 / -1;
+  }
+
+  .mission-map-wrap {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+  }
+
+  .mission-section {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .mission-waypoint-section {
+    grid-column: 2;
+  }
+
+  .mission-upload-bar {
+    grid-column: 2;
+    min-width: 0;
+  }
+}
+
+.mission-map-wrap {
+  min-width: 0;
+}
+
+.mission-section {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+  padding: 14px 16px;
+}
+
+.mission-section .home-panel,
+.mission-section .home-panel-empty {
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+.mission-rth-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mission-rth-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.mission-armed-banner {
+  border: 1px solid var(--armed-red-dim);
+  background: var(--armed-red-dim);
+  color: var(--armed-red);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.mission-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mission-section-header h3 {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-primary);
+}
+
+.mission-clear-button {
+  border: none;
+  background: none;
+  padding: 4px 8px;
+}
+
+.mission-clear-button:hover {
+  color: var(--armed-red);
+  border-color: transparent;
+}
+
+.mission-upload-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 4px 4px;
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-base);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.mission-upload-progress {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+@media (min-width: 900px) {
+  .mission-map {
+    height: 320px;
+  }
+
+  .mission-panel {
+    gap: 12px;
+  }
+}
