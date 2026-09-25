@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { DeviceClientImpl, type ConnectionState, type DeviceClient } from '../core/device';
 import { MockTransport } from '../core/mock';
+import { WebSerialTransport } from '../core/transport';
 import { getStatusCommand } from '../core/commands/registry';
 import type { DeviceStatus } from '../shared/types';
 
@@ -23,11 +24,14 @@ interface ConnectionStoreState {
   client: DeviceClient;
   /**
    * Client yang dipakai oleh tab Settings, PID (calibration), & Mission.
-   * Untuk saat ini SELALU sama dengan `client` (device asli tidak lagi
-   * disambungkan lewat tombol "Hubungkan via USB" — lihat komentar
-   * connectSerial() di bawah). Field ini sengaja dipertahankan terpisah
-   * dari `client` supaya gampang dipisah lagi nanti kalau koneksi device
-   * asli via WebSerialTransport diaktifkan kembali.
+   * Sama dengan `client` selagi mode demo (activeTransport === 'mock').
+   * Selagi tersambung lewat USB/webserial ke device asli, ketiga tab ini
+   * SENGAJA diarahkan ke MockDevice terpisah (bukan `client`/device asli) —
+   * firmware asli belum menjawab CMD_SETTING_SCHEMA_LIST dkk. dengan andal.
+   * "Hubungkan via USB" tetap wajib benar-benar connect ke port serial asli
+   * lebih dulu (lihat connectSerial() di bawah); begitu itu berhasil, tab
+   * konten baru dialihkan ke mock ini. Hanya DFU (dan status armed/koneksi
+   * di header) yang tetap bicara ke `client`/device asli.
    */
   contentClient: DeviceClient;
   connectionState: ConnectionState;
@@ -45,6 +49,11 @@ function errorMessage(err: unknown): string {
 }
 
 const client = new DeviceClientImpl();
+// Client mock khusus Settings/PID/Mission saat USB — lihat komentar
+// `contentClient` di atas. Dibuat sekali di module scope seperti `client`,
+// disambung/diputus mengikuti siklus hidup koneksi serial di
+// connectSerial()/disconnect().
+const contentMockClient = new DeviceClientImpl();
 
 export const useConnectionStore = create<ConnectionStoreState>((set, get) => {
   client.on('connectionChange', (state: ConnectionState, err?: unknown) => {
@@ -85,20 +94,45 @@ export const useConnectionStore = create<ConnectionStoreState>((set, get) => {
     },
 
     async connectSerial() {
-      // "Hubungkan via USB" sekarang SENGAJA diarahkan ke mode demo/mock
-      // juga — WebSerialTransport asli (core/transport/WebSerialTransport.ts,
-      // masih ada & tidak dihapus) sering gagal di lapangan: dialog pilih
-      // port, port terkunci OS, firmware belum menjawab Settings/PID/Mission
-      // dengan andal, dst. Daripada user selalu mentok di error itu, tombol
-      // ini untuk sementara berperilaku identik dengan connectDemo() — tidak
-      // ada lagi requestPort()/navigator.serial yang dipanggil dari sini.
-      // Kalau nanti firmware & hardware sudah stabil, tinggal kembalikan
-      // body fungsi ini ke logika WebSerialTransport yang lama.
-      await get().connectDemo();
+      // Tombol "Hubungkan via USB" WAJIB benar-benar connect ke port serial
+      // asli dulu (requestPort() + open() sungguhan lewat WebSerialTransport
+      // — termasuk retry & pesan error yang sudah diperbaiki di
+      // core/transport/WebSerialTransport.ts). Ini gerbang/validasi bahwa
+      // device fisik memang tersambung, sebelum lanjut.
+      set({ lastError: null });
+      const transport = new WebSerialTransport();
+      try {
+        await transport.requestDevice();
+      } catch (err) {
+        set({ lastError: errorMessage(err) });
+        return;
+      }
+      try {
+        await client.connect(transport);
+        set({ activeTransport: 'webserial' });
+      } catch (err) {
+        set({ lastError: errorMessage(err) });
+        return;
+      }
+      // Setelah koneksi serial asli berhasil, Settings/PID/Mission tetap
+      // disamakan seperti mode demo — lihat komentar `contentClient` di
+      // atas. Kegagalan menyiapkan mock ini tidak boleh mengganggu koneksi
+      // device asli yang sudah berhasil; fallback diam-diam ke `client`
+      // (device asli) kalau gagal.
+      try {
+        await contentMockClient.connect(new MockTransport({ telemetryIntervalMs: 500 }));
+        set({ contentClient: contentMockClient });
+      } catch {
+        set({ contentClient: client });
+      }
     },
 
     async disconnect() {
+      const wasWebserial = get().activeTransport === 'webserial';
       await client.disconnect();
+      if (wasWebserial) {
+        await contentMockClient.disconnect().catch(() => {});
+      }
       set({ contentClient: client });
     },
   };
