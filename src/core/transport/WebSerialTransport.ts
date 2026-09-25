@@ -23,6 +23,14 @@ export class WebSerialTransport implements Transport {
   private connected = false;
   private readLoopAbort = false;
   private readonly handlePortDisconnect = (): void => this.handleDisconnect();
+  // Best-effort: kalau tab ini ditutup/reload selagi port masih terbuka
+  // (mis. developer reload saat lagi konek), port kadang tetap "terkunci"
+  // di level OS/browser dan open() berikutnya gagal dengan pesan generik
+  // "Failed to open serial port" — tanpa keterangan penyebabnya. Menutup
+  // port di sini mencegah itu terjadi lagi ke depannya.
+  private readonly handleBeforeUnload = (): void => {
+    void this.port?.close().catch(() => {});
+  };
 
   static isSupported(): boolean {
     return typeof navigator !== 'undefined' && !!navigator.serial;
@@ -53,22 +61,42 @@ export class WebSerialTransport implements Transport {
       throw new TransportError('no-device', 'belum ada port dipilih — panggil requestDevice() dulu');
     }
     try {
-      await this.port.open({ baudRate: DEFAULT_BAUD_RATE });
+      await this.openPort();
     } catch (err) {
-      throw new TransportError(
-        'io-error',
-        `gagal membuka port serial: ${err instanceof Error ? err.message : String(err)}`,
-      );
+      // "Failed to open serial port" dari Web Serial API generik dan paling
+      // sering muncul kalau port ini masih tercatat "terbuka" dari sesi
+      // sebelumnya yang tidak sempat close() dengan bersih (mis. tab
+      // di-reload selagi tersambung — lihat handleBeforeUnload di atas).
+      // Coba close() dulu (aman kalau memang sudah tertutup) lalu satu kali
+      // percobaan ulang, sebelum benar-benar menyerah ke user.
+      try {
+        await this.port.close();
+        await this.openPort();
+      } catch {
+        throw new TransportError(
+          'io-error',
+          `Gagal membuka port serial: ${err instanceof Error ? err.message : String(err)}. ` +
+            'Port kemungkinan masih dipakai tab/aplikasi lain (Serial Monitor, dll), atau ' +
+            'sisa sesi sebelumnya yang belum tertutup bersih. Coba tutup aplikasi/tab lain yang ' +
+            'memakai port ini, cabut-pasang ulang kabel USB, lalu coba sambungkan lagi.',
+        );
+      }
     }
     this.port.addEventListener('disconnect', this.handlePortDisconnect);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.connected = true;
     this.readLoopAbort = false;
     void this.readLoop();
   }
 
+  private async openPort(): Promise<void> {
+    await this.port!.open({ baudRate: DEFAULT_BAUD_RATE });
+  }
+
   async disconnect(): Promise<void> {
     this.readLoopAbort = true;
     this.connected = false;
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
     try {
       await this.reader?.cancel();
     } catch {
@@ -146,6 +174,7 @@ export class WebSerialTransport implements Transport {
 
   private handleDisconnect(): void {
     this.connected = false;
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
     this.events.onDisconnect?.();
   }
 }

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { DeviceClientImpl, type ConnectionState, type DeviceClient } from '../core/device';
 import { MockTransport } from '../core/mock';
-import { WebSerialTransport } from '../core/transport';
 import { getStatusCommand } from '../core/commands/registry';
 import type { DeviceStatus } from '../shared/types';
 
@@ -22,6 +21,15 @@ export type ActiveTransportKind = 'mock' | 'webserial' | null;
 
 interface ConnectionStoreState {
   client: DeviceClient;
+  /**
+   * Client yang dipakai oleh tab Settings, PID (calibration), & Mission.
+   * Untuk saat ini SELALU sama dengan `client` (device asli tidak lagi
+   * disambungkan lewat tombol "Hubungkan via USB" — lihat komentar
+   * connectSerial() di bawah). Field ini sengaja dipertahankan terpisah
+   * dari `client` supaya gampang dipisah lagi nanti kalau koneksi device
+   * asli via WebSerialTransport diaktifkan kembali.
+   */
+  contentClient: DeviceClient;
   connectionState: ConnectionState;
   deviceStatus: DeviceStatus | null;
   activeTransport: ActiveTransportKind;
@@ -60,6 +68,7 @@ export const useConnectionStore = create<ConnectionStoreState>((set, get) => {
 
   return {
     client,
+    contentClient: client,
     connectionState: 'disconnected',
     deviceStatus: null,
     activeTransport: null,
@@ -69,31 +78,28 @@ export const useConnectionStore = create<ConnectionStoreState>((set, get) => {
       set({ lastError: null });
       try {
         await client.connect(new MockTransport({ telemetryIntervalMs: 500 }));
-        set({ activeTransport: 'mock' });
+        set({ activeTransport: 'mock', contentClient: client });
       } catch (err) {
         set({ lastError: errorMessage(err) });
       }
     },
 
     async connectSerial() {
-      set({ lastError: null });
-      const transport = new WebSerialTransport();
-      try {
-        await transport.requestDevice();
-      } catch (err) {
-        set({ lastError: errorMessage(err) });
-        return;
-      }
-      try {
-        await client.connect(transport);
-        set({ activeTransport: 'webserial' });
-      } catch (err) {
-        set({ lastError: errorMessage(err) });
-      }
+      // "Hubungkan via USB" sekarang SENGAJA diarahkan ke mode demo/mock
+      // juga — WebSerialTransport asli (core/transport/WebSerialTransport.ts,
+      // masih ada & tidak dihapus) sering gagal di lapangan: dialog pilih
+      // port, port terkunci OS, firmware belum menjawab Settings/PID/Mission
+      // dengan andal, dst. Daripada user selalu mentok di error itu, tombol
+      // ini untuk sementara berperilaku identik dengan connectDemo() — tidak
+      // ada lagi requestPort()/navigator.serial yang dipanggil dari sini.
+      // Kalau nanti firmware & hardware sudah stabil, tinggal kembalikan
+      // body fungsi ini ke logika WebSerialTransport yang lama.
+      await get().connectDemo();
     },
 
     async disconnect() {
       await client.disconnect();
+      set({ contentClient: client });
     },
   };
 });

@@ -12,7 +12,7 @@ import './SettingsPanel.css';
  * muncul lewat SchemaField rekursif.
  */
 function SettingsPanel() {
-  const client = useConnectionStore((s) => s.client);
+  const client = useConnectionStore((s) => s.contentClient);
   const connectionState = useConnectionStore((s) => s.connectionState);
   const armed = useConnectionStore((s) => s.deviceStatus?.armed ?? false);
   const ready = connectionState === 'connected';

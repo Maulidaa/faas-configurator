@@ -65,7 +65,7 @@ interface AxisCardProps {
 }
 
 function AxisCard({ axis, armed }: AxisCardProps) {
-  const client = useConnectionStore((s) => s.client);
+  const client = useConnectionStore((s) => s.contentClient);
   const state = useCalibrationStore((s) => s.axes[axis]);
   const limits = useCalibrationStore((s) => s.limits);
   const apply = useCalibrationStore((s) => s.apply);
@@ -215,7 +215,7 @@ function AxisCard({ axis, armed }: AxisCardProps) {
  * menyimpannya permanen.
  */
 function CalibrationPanel() {
-  const client = useConnectionStore((s) => s.client);
+  const client = useConnectionStore((s) => s.contentClient);
   const connectionState = useConnectionStore((s) => s.connectionState);
   const armed = useConnectionStore((s) => s.deviceStatus?.armed ?? false);
   const ready = connectionState === 'connected';

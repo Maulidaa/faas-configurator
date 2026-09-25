@@ -7,17 +7,15 @@ import { SettingsPanel } from './features/settings';
 import { MissionPanel } from './features/mission';
 import { DfuPanel, useDfuStore } from './features/dfu';
 import { CalibrationPanel } from './features/calibration';
-import { LogPanel } from './features/log';
 import './App.css';
 
-type TabKey = 'settings' | 'calibration' | 'mission' | 'dfu' | 'log';
+type TabKey = 'settings' | 'calibration' | 'mission' | 'dfu';
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'settings', label: 'Settings' },
   { key: 'calibration', label: 'PID' },
   { key: 'mission', label: 'Mission' },
-  { key: 'dfu', label: 'DFU' },
-  { key: 'log', label: 'Log' },
+  { key: 'dfu', label: 'USB to TTL' },
 ];
 
 /**
@@ -167,7 +165,6 @@ function App() {
             {activeTab === 'calibration' && <CalibrationPanel />}
             {activeTab === 'mission' && <MissionPanel />}
             {activeTab === 'dfu' && <DfuPanel />}
-            {activeTab === 'log' && <LogPanel />}
           </main>
         </>
       )}

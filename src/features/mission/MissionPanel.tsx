@@ -14,7 +14,7 @@ import './MissionPanel.css';
  * — protocol.md Bagian 5 & 10), jadi tombol kirimnya juga terpisah.
  */
 function MissionPanel() {
-  const client = useConnectionStore((s) => s.client);
+  const client = useConnectionStore((s) => s.contentClient);
   const armed = useConnectionStore((s) => s.deviceStatus?.armed ?? false);
   const waypoints = useMissionStore((s) => s.waypoints);
   const home = useMissionStore((s) => s.home);
